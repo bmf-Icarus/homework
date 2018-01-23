@@ -1,7 +1,7 @@
 /**
 * compute the volume for a # of cylinders and total volume
 *
-* Completion time: (estimation of hours spent on this program)
+* Completion time: 0.33hr
 *
 * @author JJ Rabago Jr 
 * @version 1.1.22
