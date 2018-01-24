@@ -1,7 +1,7 @@
 /**
 * compute the volume for a # of cylinders and total volume
 *
-* Completion time: 0.33hr
+* Completion time: 0.5hr
 *
 * @author JJ Rabago Jr 
 * @version 1.1.22
@@ -12,32 +12,31 @@
 //INCLUDES
 #include <stdio.h>
 
+#define PI 3.14159
+
 int main(void)
 {
-	int cNum, i=0;
+	int num, i=0;
  	float hei, rad, vol, tVol=0;
-	//Add a prompt for the number of cylinders to sum. Make sure to use the control
-	//symbol for integers. [2 points]
 
 	printf("how many cylinders to sum? ");
-	scanf("%d", &cNum);
+	scanf("%d", &num);
 	
-	//Create a loop based on the number of cylinders the user enters. [2 points]
-	while(i<cNum){
-		//    Within the loop, prompt for height and radius parameters (allow floating
-		//    point numbers), and calculate the volume for that particular cylinder.
-		//    [4 points]
+	while(i<num){		//loops for the # of cylinders
 	
-		printf("height of cylinder: \n");
+		printf("height of cylinder: ");
 		scanf("%f", &hei);
-		printf("radius of cylinder: \n");
+		printf("radius of cylinder: ");
 		scanf("%f", &rad);
-		vol = 3.14159 * rad * rad * hei;
-		tVol += vol;
+
+		vol = PI * rad * rad * hei; 	//formula for calulating
+						//area of cylinder
+		printf("volume of cylinder: %f\n", vol);
+
+		tVol += vol;			//keep running total vol
 		i++;
 	}
-	//Display the total volume sum back to the user. Make sure to use the right control
-	//symbol. [2 points]
+
 	printf("total volume of cylinder(s): %f\n", tVol);
 
 	return 0;

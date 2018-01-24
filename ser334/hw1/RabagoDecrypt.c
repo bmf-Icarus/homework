@@ -24,7 +24,6 @@ void decrypt_chunks();
 void display_chunks();
 
 char chunks[NUMBER_OF_CHUNKS][CHUNK_LENGTH];
-char *ptr;
 
 int main() {
 
@@ -44,8 +43,8 @@ int main() {
 
 //given two strings, swaps their contents in memory.
 void swap_strings(char* x, char* y) {
-	//create a temporary holding place for the data so we don't lose it.
 
+	//create a temporary holding place for the data so we don't lose it.
 	char temp[CHUNK_LENGTH];
 
 	strcpy(temp, x);
@@ -56,6 +55,8 @@ void swap_strings(char* x, char* y) {
 //sorts the strings the global chunks variable by the first character they contain.
 void sort_chunks() {
 
+	//pick lowest value of array and insert it to first location
+	//then do the same for remaining elements
 	for(int i=0;i<NUMBER_OF_CHUNKS;i++){
 		for(int j=i+1;j<NUMBER_OF_CHUNKS;j++){ 
 			if(chunks[i][0] > chunks[j][0])
@@ -68,6 +69,7 @@ void sort_chunks() {
 //DECRYPTION_SHIFT.
 void decrypt_chunks() {
 
+	//for each char in each array; manipulate
 	for(int i=0;i<NUMBER_OF_CHUNKS;i++){
 		ptr=chunks[i];
 		for(int j=0;j<CHUNK_LENGTH-2;j++){
@@ -81,6 +83,10 @@ void decrypt_chunks() {
 //displays the strings in the global chunks variable
 void display_chunks() {
 
+	char *ptr;
+
+	//use a pointer for byte addressing each char,skipping 
+	//the first element and display
 	for(int i=0;i<NUMBER_OF_CHUNKS;i++){
 		ptr=chunks[i];
 		for(int j=0;j<CHUNK_LENGTH-1;j++){
