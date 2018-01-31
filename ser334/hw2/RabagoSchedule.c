@@ -12,13 +12,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 //DATA STRUCTURES
 enum Subject { SER = 0, EGR = 1, CSE = 2, EEE = 3 };
-typedef struct {
+struct Course{
 	enum Subject mySubject;
 	int subjectNum;
 	char instructor[1024];
 	int credits;
 
-}Course;
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 //GLOBAL VARIABLES
@@ -27,13 +27,13 @@ typedef struct {
 int courseCount = 0;
 
 //place to store course information
-Course *CourseCollection = NULL;
+struct Course *CourseCollection = NULL;
 
 ////////////////////////////////////////////////////////////////////////////////
 //FORWARD DECLARATIONS
 void branching(char option);
 void course_info();
-void course_insert(Course input);
+void course_insert();
 void schedule_print();
 void course_drop(); 
 
@@ -41,7 +41,6 @@ void course_drop();
 //input loop that displays a menu and processes user input. Pressing q quits.      
 int main() {
 	char input_buffer;
-
 	printf("\n\nWelcome to ASU Class Schedule\n");
 
 	//menu and input loop
@@ -92,7 +91,7 @@ void branching(char option) {
 }
 
 void course_info(){
-	Course temp;
+	struct Course temp;
 	//strcpy(temp.instructor, "");
 	memset(temp.instructor,0, sizeof(temp.instructor));
 	printf("\nWhat is the subject? ex. SER = 0, EGR = 1, CSE = 2, EEE = 3\n");
@@ -106,31 +105,34 @@ void course_info(){
 	
 	course_insert(temp);
 }
-void course_insert(Course input){
+void course_insert(struct Course input){
 	courseCount++;
+	int x = 0;
 	if(courseCount == 1) {
-		CourseCollection = (Course *)malloc(sizeof(Course) * courseCount);
+		CourseCollection = (struct Course*) malloc(sizeof(struct Course));
 		CourseCollection[0] = input;
 	}
 	else {
-		Course *newCourseCollection = (Course *)malloc(sizeof(Course) * courseCount);
-		for(int i = 0; i < courseCount; i++){
-			int j = 0;
-			if(input.subjectNum <= CourseCollection[j].subjectNum){
-				newCourseCollection[i] = input;
+		//printf("list size : %lu\n\n", sizeof(struct Course));
+		struct Course * newCourseCollection = (struct Course*)malloc(sizeof(struct Course) * (courseCount));
+		for(int i = 0,j = 0; i < courseCount - 1; i++){
+			if( x || input.subjectNum < CourseCollection[j].subjectNum ){
+				newCourseCollection[j] = input;
 				i++;
-				if(j < courseCount-1) 	//make sure it exists
-					newCourseCollection[i] = CourseCollection[j];
+				x++;
 			}
-			else if(input.subjectNum > CourseCollection[j].subjectNum)	
-				newCourseCollection[i] = CourseCollection[j];
+
+			newCourseCollection[i] = CourseCollection[j];
+
 			j++;
 		}
-		CourseCollection = (Course *)realloc(CourseCollection, sizeof(newCourseCollection));
+		free(CourseCollection);
+		CourseCollection = (struct Course *)malloc(sizeof(struct Course) * (courseCount));
 		CourseCollection = newCourseCollection;
 		free(newCourseCollection);
 		newCourseCollection = NULL;
 	}
+
 }	
 void schedule_print(){
 	printf("\n\nClass Schedule\nCourse\tCredits\tInstructor\n");
