@@ -2,6 +2,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/sched.h>
+#include <linux/list.h>
 #include <linux/moduleparam.h>
 
 MODULE_LICENSE("GPL");
