@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int main(){
+int main(int argc, char *argv[]){
 
 	FILE *fp;
 	char *line = NULL;
@@ -17,7 +17,7 @@ int main(){
 	ssize_t read;
 
 	//open file and read-in data
-	fp = fopen("data.txt", "r");
+	fp = fopen(argv[1], "r");
 	//the first two elements describe the
 	// following data
 	for( int i=0; i<2; i++){
