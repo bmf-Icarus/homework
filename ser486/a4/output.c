@@ -115,7 +115,11 @@ void writestr(char * str)
 /* Student-provided function comments go here */
 void writehex8(unsigned char num)
 {
-    /* student-provided implementation code goes here */
+    // separate the byte into four bits each
+    unsigned char uppper = (num >> 4);
+    unsigned char lower = num && 0x0F;
+
+
 }
 
 /* Student-provided function comments go here */
@@ -129,4 +133,16 @@ void writehex16(unsigned int num)
 void blink_led(char *msg)
 {
     /* student-provided implementation code goes here */
+}
+
+void workFx(unsigned char num)
+{
+    switch(num){
+        case 0:
+
+
+
+    }
+    writestr(str);
+
 }
