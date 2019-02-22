@@ -112,37 +112,75 @@ void writestr(char * str)
 * STUDENT CODE BELOW THIS POINT
 *************************************************************/
 
-/* Student-provided function comments go here */
+#define PORTB (*(volatile char *)0x25)
+
+/* fx breaks 1 byte into 4bit array,
+    converts int value to ascii code in helper fx*/
 void writehex8(unsigned char num)
 {
     // separate the byte into four bits each
-    unsigned char uppper = (num >> 4);
-    unsigned char lower = num && 0x0F;
+    unsigned char char4Arr[2];
+    char4Arr[1]= num & 0x0F;
+    char4Arr[0]= num >> 4;
 
+    for(char i = 0; i < 2; i++)
+    {
+        ;
+        if( (char4Arr[i] >= 0) && (char4Arr[i] < 10))
+        {   // num is 9 or less which map to hex
+            // ascii code for 0 evaluates to 48
+            uart_writechar(char4Arr[i]+'0');
+        }else if( char4Arr[i] >= 10 && char4Arr[i] < 16)
+        {   // num-10 because we start at 0xA which is 10(decimal)
+            // thus 0 = A(65) and 5 = F(70)
+            uart_writechar((char4Arr[i]-10)+'A');
+        }
+    }
 
 }
 
-/* Student-provided function comments go here */
+/* fx similar to writehex8 but 2x bigger */
 void writehex16(unsigned int num)
 {
-    /* student-provided implementation code goes here */
+    unsigned char char4Arr[2];
+
+    char4Arr[1]= num & 0x00FF;
+    char4Arr[0]= num >> 8;
+
+    for(char i = 0; i < 2; i++)
+    {
+        writehex8(char4Arr[i]);
+    }
 
 }
 
 /* Student-provided function comments go here */
 void blink_led(char *msg)
 {
-    /* student-provided implementation code goes here */
-}
+    unsigned char i = 0;
 
-void workFx(unsigned char num)
-{
-    switch(num){
-        case 0:
-
-
+    while(msg[i] != '\0')
+    {
+        /* student-provided implementation code goes here */
+        if( msg[i] == '-')
+        {   // turn on portb
+            PORTB |= 0x02;
+            delay(750);
+            //turn off portb
+            PORTB &= 0xFD;
+            delay(100);
+        }else if( msg[i] == '.')
+        {   // turn on portb
+            PORTB |= 0x02;
+            delay(250);
+            // turn off portb
+            PORTB &= 0xFD;
+            delay(100);
+        }else if( msg[i] == ' ')
+        {
+            delay(1000);
+        }
+        i++;
 
     }
-    writestr(str);
-
 }
