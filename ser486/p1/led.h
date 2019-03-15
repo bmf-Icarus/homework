@@ -21,4 +21,7 @@ void led_off();         /* turn off the LED */
 int  led_ison();        /* returns 1 if the LED is on, otherwise, 0 */
 void led_blink(char *); /* output a Morse code message to the LED */
 
+void led_set_blink(char* msg);  // sets the FSM message to display in Morse code for humans
+void led_update(void);          // updates the led FSM
+
 #endif // LED_H_INCLUDED

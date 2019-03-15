@@ -16,5 +16,9 @@
 #define DELAY_H_INCLUDED
 
 void delay(unsigned int msec);  /* delay for the specified amount of milliseconds */
+unsigned int delay_get(unsigned int num);
+void delay_set(unsigned int num, unsigned int time);
+unsigned int delay_isdone(unsigned int num);
+
 
 #endif // DELAY_H_INCLUDED
