@@ -11,10 +11,10 @@
 #define TCCR0B (*(volatile char *)0x45)
 #define TIMSK0 (*(volatile char *)0x6E)
 #define OCR0A (*(volatile char *)0x47)
-#define SREG (*(volatile char *)0x5F)
+#define SREG (*(volatile char *)0x3F)
 
 // count keeps track of time passed
-unsigned int volatile count[] = {0,0};
+unsigned int volatile counts[] = {0,0};
 // limit is what the count goes up to
 unsigned int limit[] = {0,0};
 // initialized will act as a flag as to not reset current settings.
@@ -22,30 +22,29 @@ unsigned char initialized = 0;
 // used to save sreg state
 unsigned char timer0_temp_byte = 0;
 
-// initializes the timer functionality with necessary registers
+// initializes the timer functionality wgm set to ctc
+// enable interruputs for timer compare
 void delay_init(void)
 {
-	// clear out output modes & set WGM00 to low
-	TCCR0A &= 0x00;
+
+    OCR0A |= 0xF9; // 0xF9 = 249
+
 	// set timer to clear on compare match - set WGM01 to high
 	TCCR0A |= 0x02;
-	// set WGM02 to low
-	TCCR0B &= 0xC0;
-	// set CS0[2] as high for 64 pre-scaler on clock
+	// set CS0[1,0] as high for 64 pre-scaler on clock
 	TCCR0B |= 0x03;
-	// enable timer interrupt bit0 TOIE
-	TIMSK0 |= 0x01;
-
-	// enable global interrupts
-    SREG |= 0x80;
+	// enable timer interrupt bit1
+	TIMSK0 |= 0x02;
 
 	// timer0 is now set on a pre-scaler of 64
-	// the clock will run at 250kHz which works out well
+	// the vector will run at 250kHz which works out well
 	// every 250 cycles about 1ms would pass.
 	// this will produce an approx 1ms interrupt
-	OCR0A = 0xF9;
+
 	// at this point initialization is complete
 	initialized = 1;
+    // enable global interrupts
+    SREG |= 0x80;
 }
 
 // get the delay and do it atomically
@@ -56,8 +55,8 @@ unsigned int delay_get(unsigned int num)
     // for an atomic operation
     timer0_temp_byte = SREG;
     SREG &= 0x7F;
-    d_value = count[num];
-    SREG = timer0_temp_byte;
+    d_value = counts[num];
+    SREG |= timer0_temp_byte;
 
 	// return the count for given instance
 	return d_value;
@@ -80,18 +79,18 @@ void delay_set(unsigned int num, unsigned int time)
 	// set the limit for given instance
 	limit[num] = time;
 	// clear count for given instance
-	count[num] = 0;
+	counts[num] = 0;
 
-	SREG = timer0_temp_byte;
+	SREG |= timer0_temp_byte;
 }
 
 // function to ensure count equals limit
 unsigned int delay_isdone(unsigned int num)
 {
-	if( count[num] == limit[num] )
+	if( counts[num] == limit[num] )
 	{
 	    // once this has been read reset the counter
-	    count[num]=0;
+	    counts[num] = 0;
 		return 1;
 	}else
 	{
@@ -104,12 +103,13 @@ unsigned int delay_isdone(unsigned int num)
 void __vector_14(void) __attribute__ ((signal, used, externally_visible));
 void __vector_14(void)
 {
+
     for(unsigned char i = 0 ; i < 2; i++)
     {
         //only increment if the values are not equal
         // with this count should never be higher than the limit
-        if(count[i] != limit[i])
-            count[i]++;
+        if(counts[i] < limit[i])
+            counts[i]++;
     }
 
 }
