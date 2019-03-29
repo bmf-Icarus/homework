@@ -3,7 +3,7 @@
  *	eeprom.c
  *
  *	hardware device design pattern meant to encapsulate reading from
- *	and writing to the electronically erasable programable read only
+ *	and writing to the electronically erasable programmable read only
  *	memory. reads are directly from the hardware while the writes are
  *	buffered for efficiency.
  */
@@ -11,6 +11,8 @@
 #define EEAR (*(volatile char *)0x41)
 #define EEDR (*(volatile char *)0x40)
 #define EECR (*(volatile char *)0x3F)
+
+#define SPMCSR (*(volatile char *)0x57)
 
 #define BUFSIZE 64
 
@@ -38,6 +40,15 @@ void eeprom_writebuf(unsigned int addr, unsigned char * buf, unsigned char size)
         writebuf[n] = buf[n];
     }
 
+    // first char write for simulator fix
+
+    EEAR = writeaddr + bufidx;
+    EEDR = writebuf[bufidx];
+    EECR |= 0x04;
+    EECR |= 0x02;
+    bufidx++;
+    // end simulator fix
+
     // enable eeprom ready interrupt
     EECR |= 0x8;
 }
@@ -61,8 +72,9 @@ void eeprom_readbuf(unsigned int addr, unsigned char * buf, unsigned char size)
 
 int eeprom_isbusy()
 {
-    //make sure there is no write in progress
-    if(!write_busy)
+    //make sure there is no write in progress(EEPE bit)
+    //do nothing while SPMEN bit is high(program writing)
+    if(!write_busy | (EECR & 0x02) | (SPMCSR & 0x01))
     {
         return 1; //eeprom currently writing
     }
